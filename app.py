@@ -6,6 +6,11 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Numeric, Text, Float 
 
+from flask import (
+    Flask,
+    render_template,
+    jsonify)
+
 # importing cleaned measurments data 
 data_file = "combo_data.csv"
 # Read CSV file into a pandas DataFrame
