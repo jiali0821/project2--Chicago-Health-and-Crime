@@ -26,29 +26,46 @@
 <body>
     <div class = "containter">
 
-    <div class="jumbotron text-center">
-        <h1 class="jumbotron">Chicago Crime Dashboard</h1>
-        <p>Use the interactive charts below to explore the dataset</p>
-    </div>
-  <h2><center>Crime vs. Public Health Indicators</center></h2>
-  <div>
-  <select  onchange="drawTable(this.value)">
-        <option   value="Stroke">Stroke</option>
-        <option   value="Tuberculosis">Tuberculosis</option>
-        <option   value="Preterm_Births">Preterm Birth</option>
-        <option   value="Below_Poverty">Below Poverty Level</option>
-        
-    </select>
-    </div>
+         
+        <div class = "row"> 
+            <div class = "col-md-12">
+                <div class="jumbotron text-center">
+                    <h1 class="jumbotron">Chicago Crime Dashboard</h1>
+                    <p>Use the interactive charts below to explore the dataset</p>
+                </div>
+            </div> 
+        </div>  
+        <div class = "row">
+            <div class = "col-md-12">
+            <div id="bar-plot"></div>
+                    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+                <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script> -->
+                
+                <select id="selDataset" onchange="getData(this.value)"></select>
+                <div id="pie"></div>
+                <script src="{{ url_for('static', filename='js/plots.js') }}"></script>
+            </div>
+        </div>
 
-    <div id="bar-plot"></div>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script> -->
-  
-  <select id="selDataset" onchange="getData(this.value)"></select>
-<div id="pie"></div>
-<script src="{{ url_for('static', filename='js/plots.js') }}"></script>
-  
+   
+        <div class = "row"> 
+            <div class = "col-md-12"> 
+                <h2><center>Crime vs. Public Health Indicators</center></h2>
+                <div id="crime_ph_plot"></div>  
+                
+                <div>
+                <select  onchange="drawTable(this.value)">
+                        <option   value="Stroke">Stroke</option>
+                        <option   value="Tuberculosis">Tuberculosis</option>
+                        <option   value="Preterm_Births">Preterm Birth</option>
+                        <option   value="Below_Poverty">Below Poverty Level</option>
+                        
+                    </select>
+                    </div>
+            </div>
+        </div> 
+
+    
  
       
  <script >
@@ -68,132 +85,133 @@ var margin = {
 var chartWidth = svgWidth - margin.left - margin.right;
 var chartHeight = svgHeight - margin.top - margin.bottom;
 
-// Select body, append SVG area to it, and set its dimensions
-var svg = d3.select("body")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
+// // Select body, append SVG area to it, and set its dimensions
+// var svg = d3.select("#crime_ph_plot")
+//   .append("svg")
+//   .attr("width", svgWidth)
+//   .attr("height", svgHeight);
 
-// Append a group area, then set its margins
-var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+// // Append a group area, then set its margins
+// var chartGroup = svg.append("g")
+//   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 drawTable("Stroke");
   // Load data from flask /tb route
 function drawTable(choice){
-    d3.select("svg").remove();
+    d3.select("#plot_svg").remove();
 
-    // Select body, append SVG area to it, and set its dimensions
-var svg = d3.select("body")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
+        // Select body, append SVG area to it, and set its dimensions
+    var svg = d3.select("#crime_ph_plot")
+    .append("svg")
+    .attr("id", "plot_svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
 
-// Append a group area, then set its margins
-var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    // Append a group area, then set its margins
+    var chartGroup = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-d3.json("/tb", function (error, crimetb) {
+    d3.json("/tb", function (error, crimetb) {
 
-    // Throw an error if one occurs
-    if (error) throw error;
+        // Throw an error if one occurs
+        if (error) throw error;
 
-    // Print the forceData
-    console.log(crimetb);
+        // Print the forceData
+        console.log(crimetb);
 
-   
-
-    // Forcesing values in csv to be numbers
-    crimetb.forEach(function (data) {
-        data.Crime_Count = +data.Crime_Count;
-        data[choice] = +data[choice];
-        data.Stroke = +data.Stroke;
-      });
     
-    // Creating x and y scales
-    var xLinearScale = d3.scaleLinear()
-      .domain(d3.extent(crimetb, data => data.Crime_Count))
-      .range([0, chartWidth]);
 
-    console.log(d3.max(crimetb, data => data[choice]))
-     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(crimetb, data => data[choice])])
-      .range([chartHeight, 0]);
+        // Forcesing values in csv to be numbers
+        crimetb.forEach(function (data) {
+            data.Crime_Count = +data.Crime_Count;
+            data[choice] = +data[choice];
+            data.Stroke = +data.Stroke;
+        });
+        
+        // Creating x and y scales
+        var xLinearScale = d3.scaleLinear()
+        .domain(d3.extent(crimetb, data => data.Crime_Count))
+        .range([0, chartWidth]);
 
-      var ystroke = d3.scaleLinear()
-      .domain([0, d3.max(crimetb, data => data.Stroke)])
-      .range([chartHeight, 0]);
+        console.log(d3.max(crimetb, data => data[choice]))
+        var yLinearScale = d3.scaleLinear()
+        .domain([0, d3.max(crimetb, data => data[choice])])
+        .range([chartHeight, 0]);
 
-    // These will be used to create the chart's axes
-    var bottomAxis = d3.axisBottom(xLinearScale);
-    var leftAxis = d3.axisLeft(yLinearScale);
-  
+        var ystroke = d3.scaleLinear()
+        .domain([0, d3.max(crimetb, data => data.Stroke)])
+        .range([chartHeight, 0]);
 
-    // Append an SVG group element to the chartGroup, create the left axis inside of it
-    chartGroup.append("g")
-      .classed("axis", true)
-      .call(leftAxis);
+        // These will be used to create the chart's axes
+        var bottomAxis = d3.axisBottom(xLinearScale);
+        var leftAxis = d3.axisLeft(yLinearScale);
+    
 
-    // Append an SVG group element to the chartGroup, create the bottom axis inside of it
-    // Translate the bottom axis to the bottom of the page
-    chartGroup.append("g")
-      .classed("axis", true)
-      .attr("transform", `translate(0, ${chartHeight})`)
-      .call(bottomAxis);
+        // Append an SVG group element to the chartGroup, create the left axis inside of it
+        chartGroup.append("g")
+        .classed("axis", true)
+        .call(leftAxis);
 
-      // draw dots
-      var circlesGroup = chartGroup.selectAll("circle")
-      .data(crimetb)
-      .enter()
-      .append("circle")
-      .attr("cx", d => xLinearScale(d.Crime_Count))
-      .attr("cy", d => yLinearScale(d[choice]))
-      .attr("r", "2")
-      .attr("fill", "gold")
-      .attr("stroke-width", "5")
-      .attr("stroke", "black")
-      ;
+        // Append an SVG group element to the chartGroup, create the bottom axis inside of it
+        // Translate the bottom axis to the bottom of the page
+        chartGroup.append("g")
+        .classed("axis", true)
+        .attr("transform", `translate(0, ${chartHeight})`)
+        .call(bottomAxis);
 
-    // Adding x-axis lable
-    chartGroup.append("text")
-      // Position the text
-      // Center the text:
-      // (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor)
-      .attr("transform",`translate(${chartWidth / 2}, ${chartHeight +30})`)
-      .attr("text-anchor", "middle") //text-anchoer sayt to keep the text here
-      .attr("font-size", "16px")
-      .attr("fill", "black")
-      .text("Chicago Crime 2015");
+        // draw dots
+        var circlesGroup = chartGroup.selectAll("circle")
+        .data(crimetb)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xLinearScale(d.Crime_Count))
+        .attr("cy", d => yLinearScale(d[choice]))
+        .attr("r", "2")
+        .attr("fill", "gold")
+        .attr("stroke-width", "5")
+        .attr("stroke", "black")
+        ;
 
-      // Adding y-axis lable
-      chartGroup.append("text")
-      // Position the text
-      // Center the text:
-      // (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor)
-      .attr("transform",`translate( -110, ${chartHeight/ 2 })`)
-      .attr("text-anchor", "middle") //text-anchoer sayt to keep the text here
-      .attr("font-size", "16px")
-      .attr("fill", "black")
-      .text("Public Heatlth Indicator");
+        // Adding x-axis lable
+        chartGroup.append("text")
+        // Position the text
+        // Center the text:
+        // (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor)
+        .attr("transform",`translate(${chartWidth / 2}, ${chartHeight +30})`)
+        .attr("text-anchor", "middle") //text-anchoer sayt to keep the text here
+        .attr("font-size", "16px")
+        .attr("fill", "black")
+        .text("Chicago Crime 2015");
 
-     // Step 1: Initialize Tooltip
-     var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([60, -70]) //moves the box down and way from the cneter of the point
-    .html(function(d){
-      return (`${d.Community_Area_Name}<hr>Total Crime: ${d.Crime_Count}`)
-    })
+        // Adding y-axis lable
+        chartGroup.append("text")
+        // Position the text
+        // Center the text:
+        // (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor)
+        .attr("transform",`translate( -110, ${chartHeight/ 2 })`)
+        .attr("text-anchor", "middle") //text-anchoer sayt to keep the text here
+        .attr("font-size", "16px")
+        .attr("fill", "black")
+        .text("Public Heatlth Indicator");
 
-    // Step 2: Create the tooltip in chartGroup.
-    chartGroup.call(toolTip)
+        // Step 1: Initialize Tooltip
+        var toolTip = d3.tip()
+        .attr("class", "tooltip")
+        .offset([60, -70]) //moves the box down and way from the cneter of the point
+        .html(function(d){
+        return (`${d.Community_Area_Name}<hr>Total Crime: ${d.Crime_Count}`)
+        })
 
-    // Step 3: Create "mouseover" event listener to display tooltip
-    circlesGroup.on("mouseover", function(d){
-      toolTip.show(d)
-    })
-  // Step 4: Create "mouseout" event listener to hide tooltip
-    .on("mouseout", function(d){
-      toolTip.hide(d)
+        // Step 2: Create the tooltip in chartGroup.
+        chartGroup.call(toolTip)
+
+        // Step 3: Create "mouseover" event listener to display tooltip
+        circlesGroup.on("mouseover", function(d){
+        toolTip.show(d)
+        })
+    // Step 4: Create "mouseout" event listener to hide tooltip
+        .on("mouseout", function(d){
+        toolTip.hide(d)
     });
 
 
