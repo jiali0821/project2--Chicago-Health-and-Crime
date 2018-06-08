@@ -90,15 +90,6 @@ var margin = {
 var chartWidth = svgWidth - margin.left - margin.right;
 var chartHeight = svgHeight - margin.top - margin.bottom;
 
-// // Select body, append SVG area to it, and set its dimensions
-var svg = d3.select("#crime_ph_plot")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
-
-// Append a group area, then set its margins
-var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 drawTable("Stroke");
   // Load data from flask /tb route
@@ -106,11 +97,11 @@ function drawTable(choice){
     d3.select("#plot_svg").remove();
 
     // Select body, append SVG area to it, and set its dimensions
-// var svg = d3.select("#crime_ph_plot")
-//   .append("svg")
-//   .attr("id", "plot_svg")
-//   .attr("width", svgWidth)
-//   .attr("height", svgHeight);
+var svg = d3.select("#crime_ph_plot")
+  .append("svg")
+  .attr("id", "plot_svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight);
 
 // Append a group area, then set its margins
 var chartGroup = svg.append("g")
