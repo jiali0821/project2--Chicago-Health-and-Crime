@@ -32,28 +32,42 @@ function getOptions() {
    
    // Use the list of sample names to populate the select options
    Plotly.d3.json('crime_pie', function(error, response) {
-       console.log('resp', response);
+    //    console.log('xxx', response);
+       var area_names = []
+
        for (var i = 0; i < response.length;  i++) {
            // console.log("selector", selector)
+           if (area_names.includes(response[i]["Community_Area_Name"])){
+            // console.log(area_names)   
+            continue
+
+           }
+           else{
            var currentOption = document.createElement('option');
            currentOption.text = response[i]["Community_Area_Name"];
            currentOption.value = response[i]["Community_Area_Name"];
            selector.appendChild(currentOption);
-       }
+            
+           area_names.push(response[i]["Community_Area_Name"])
+        }
+        
+        }
    });
  };
 
 
 // function select(X) {
 //     return X.Community_Area_Name = ;
-
+getData("Ashburn");
 function getData(dataset) {
    Plotly.d3.json("/crime_pie", function(error, response){
    // console.log(response);
+
+//    d3.select("#pie").remove();
  
      var final_results = response.filter(test => test.Community_Area_Name === dataset) ;
      
-     console.log(final_results)
+    //  console.log(final_results)
 
    var data = [{
    values: final_results.map(data => data.ID),
@@ -61,7 +75,7 @@ function getData(dataset) {
    type: "pie"
    }];
    var layout = { height: 600,width: 800};
-   Plotly.plot("pie", data, layout);
+   Plotly.newPlot("pie", data, layout);
    })
 };
 
