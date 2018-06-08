@@ -1,10 +1,10 @@
 # Dependencies
 import pandas as pd
 # Python SQL toolkit and Object Relational Mapper
-import sqlalchemy
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Numeric, Text, Float 
+# import sqlalchemy
+# from sqlalchemy import create_engine, MetaData
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy import Column, Integer, String, Numeric, Text, Float 
 
 from flask import (
     Flask,
