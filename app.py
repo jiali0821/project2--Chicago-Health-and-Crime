@@ -116,6 +116,10 @@ def pie_crimes():
    tb_json=tb_grouped.to_json(orient="records")
    return tb_json
 
+@app.route("/treemap.html")
+def treemap():
+   """Render Home Page."""
+   return render_template('treemap.html')
 
 
 if __name__ == "__main__":
